@@ -49,7 +49,6 @@ Supported rendering backends:
 Supported platforms:
 
  * Android (14+, ARM, x86, MIPS)
- * asm.js/Emscripten (1.25.0)
  * FreeBSD
  * iOS (iPhone, iPad, AppleTV)
  * Linux
@@ -57,8 +56,9 @@ Supported platforms:
  * OSX (10.12+)
  * PlayStation 4
  * RaspberryPi
- * Windows (XP, Vista, 7, 8, 10)
  * UWP (Universal Windows, Xbox One)
+ * Wasm/Emscripten
+ * Windows (XP, Vista, 7, 8, 10)
 
 Supported compilers:
 
@@ -71,7 +71,6 @@ Languages:
  * [C/C++ API documentation](https://bkaradzic.github.io/bgfx/bgfx.html)
  * [Beef API bindings](https://github.com/bkaradzic/bgfx/tree/master/bindings/bf)
  * [C# language API bindings #1](https://github.com/bkaradzic/bgfx/tree/master/bindings/cs)
- * [C#/VB/F# language API bindings #2](https://github.com/MikePopoloski/SharpBgfx)
  * [D language API bindings](https://github.com/GoaLitiuM/bindbc-bgfx)
  * [Go language API bindings](https://github.com/james4k/go-bgfx)
  * [Haskell language API bindings](https://github.com/haskell-game/bgfx)
@@ -81,12 +80,12 @@ Languages:
  * [Pascal language API bindings](https://github.com/Akira13641/PasBGFX)
  * [Python language API bindings #1](https://github.com/fbertola/bgfx-python#-----bgfx-python--)
  * [Python language API bindings #2](https://github.com/jnadro/pybgfx#pybgfx)
- * [Rust language API bindings (obsolete)](https://github.com/rhoot/bgfx-rs)
  * [Rust language API bindings (new)](https://github.com/emoon/bgfx-rs)
  * [Swift language API bindings](https://github.com/stuartcarnie/SwiftBGFX)
+ * [Zig language API bindings](https://github.com/bkaradzic/bgfx/tree/master/bindings/zig)
 
-Who is using it? [#madewithbgfx](https://twitter.com/search?q=%23madewithbgfx&f=live)
--------------------------------------------------------------------------------------
+Who is using it? [#madewithbgfx](https://twitter.com/search?q=%23madewithbgfx&src=typed_query&f=live)
+-----------------------------------------------------------------------------------------------------
 
 ## Airmech
 
@@ -498,6 +497,26 @@ https://klei.com/games/griftlands
 target="_blank"><img src="http://img.youtube.com/vi/ufl14_Ne5Lg/0.jpg" 
 alt="Griftlands"
 width="640" height="480" border="0" /></a>
+
+## HARFANG 3D
+
+[HARFANG® 3D](https://www.harfang3d.com) is a **BGFX-powered** 3D visualization framework for C++, Python, Go, and Lua.
+It comes with a 3D editor, HARFANG Studio.
+
+![HARFANG-STUDIO](https://raw.githubusercontent.com/harfang3d/image-storage/main/portfolio/3.2.2/harfang-studio-cyber-city.png)
+
+## Marine Melodies / Resistance
+
+Demoscene musicdisk released at Evoke 2022 demoparty.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=Ma1-UBa3f2E" 
+target="_blank"><img src="http://img.youtube.com/vi/Ma1-UBa3f2E/0.jpg" 
+alt="Marine Melodies"
+width="640" height="480" border="0" /></a>
+
+https://www.pouet.net/prod.php?which=91906
+
+https://github.com/astrofra/demo-marine-melodies
 
 [License (BSD 2-clause)](https://bkaradzic.github.io/bgfx/license.html)
 -----------------------------------------------------------------------

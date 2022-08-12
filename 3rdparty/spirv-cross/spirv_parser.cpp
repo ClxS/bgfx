@@ -31,7 +31,7 @@ namespace SPIRV_CROSS_NAMESPACE
 {
 Parser::Parser(vector<uint32_t> spirv)
 {
-	ir.spirv = move(spirv);
+	ir.spirv = std::move(spirv);
 }
 
 Parser::Parser(const uint32_t *spirv_data, size_t word_count)
@@ -259,7 +259,7 @@ void Parser::parse(const Instruction &instruction)
 	case OpExtension:
 	{
 		auto ext = extract_string(ir.spirv, instruction.offset);
-		ir.declared_extensions.push_back(move(ext));
+		ir.declared_extensions.push_back(std::move(ext));
 		break;
 	}
 
@@ -279,6 +279,8 @@ void Parser::parse(const Instruction &instruction)
 			set<SPIRExtension>(id, SPIRExtension::SPV_AMD_shader_trinary_minmax);
 		else if (ext == "SPV_AMD_gcn_shader")
 			set<SPIRExtension>(id, SPIRExtension::SPV_AMD_gcn_shader);
+		else if (ext == "NonSemantic.DebugPrintf")
+			set<SPIRExtension>(id, SPIRExtension::NonSemanticDebugPrintf);
 		else
 			set<SPIRExtension>(id, SPIRExtension::Unsupported);
 
@@ -291,7 +293,15 @@ void Parser::parse(const Instruction &instruction)
 	{
 		// The SPIR-V debug information extended instructions might come at global scope.
 		if (current_block)
+		{
 			current_block->ops.push_back(instruction);
+			if (length >= 2)
+			{
+				const auto *type = maybe_get<SPIRType>(ops[0]);
+				if (type)
+					ir.load_type_width.insert({ ops[1], type->width });
+			}
+		}
 		break;
 	}
 
@@ -1010,7 +1020,16 @@ void Parser::parse(const Instruction &instruction)
 			}
 			else
 			{
-				ir.block_meta[current_block->next_block] &= ~ParsedIR::BLOCK_META_SELECTION_MERGE_BIT;
+				// Collapse loops if we have to.
+				bool collapsed_loop = current_block->true_block == current_block->merge_block &&
+				                      current_block->merge == SPIRBlock::MergeLoop;
+
+				if (collapsed_loop)
+				{
+					ir.block_meta[current_block->merge_block] &= ~ParsedIR::BLOCK_META_LOOP_MERGE_BIT;
+					ir.block_meta[current_block->continue_block] &= ~ParsedIR::BLOCK_META_CONTINUE_BIT;
+				}
+
 				current_block->next_block = current_block->true_block;
 				current_block->condition = 0;
 				current_block->true_block = 0;
@@ -1059,6 +1078,7 @@ void Parser::parse(const Instruction &instruction)
 	}
 
 	case OpKill:
+	case OpTerminateInvocation:
 	{
 		if (!current_block)
 			SPIRV_CROSS_THROW("Trying to end a non-existing block.");
@@ -1211,10 +1231,9 @@ void Parser::parse(const Instruction &instruction)
 		{
 			const auto *type = maybe_get<SPIRType>(ops[0]);
 			if (type)
-			{
 				ir.load_type_width.insert({ ops[1], type->width });
-			}
 		}
+
 		if (!current_block)
 			SPIRV_CROSS_THROW("Currently no block to insert opcode.");
 

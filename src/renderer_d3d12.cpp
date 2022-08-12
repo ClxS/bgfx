@@ -919,7 +919,7 @@ namespace bgfx { namespace d3d12
 			}
 
 			DX_CHECK(m_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &m_options, sizeof(m_options) ) );
-			BX_TRACE("D3D12 options:")
+			BX_TRACE("D3D12 options:");
 			BX_TRACE("\tTiledResourcesTier %d", m_options.TiledResourcesTier);
 			BX_TRACE("\tResourceBindingTier %d", m_options.ResourceBindingTier);
 			BX_TRACE("\tROVsSupported %d", m_options.ROVsSupported);
@@ -2716,7 +2716,7 @@ namespace bgfx { namespace d3d12
 				}
 
 				bx::memCopy(curr, &inst, sizeof(D3D12_INPUT_ELEMENT_DESC) );
-				curr->InputSlot = 1;
+				curr->InputSlot = _numStreams;
 				curr->SemanticIndex = index;
 				curr->AlignedByteOffset = ii*16;
 			}
@@ -5110,8 +5110,20 @@ namespace bgfx { namespace d3d12
 		box.top    = 0;
 		box.right  = box.left + _rect.m_width;
 		box.bottom = box.top  + _rect.m_height;
-		box.front  = _z;
-		box.back   = _z + _depth;
+
+		uint32_t layer = 0;
+
+		if (TextureD3D12::Texture3D == m_type)
+		{
+			box.front = _z;
+			box.back  = box.front + _depth;
+		}
+		else
+		{
+			layer = _z * (TextureD3D12::TextureCube == m_type ? 6 : 1);
+			box.front = 0;
+			box.back  = 1;
+		}
 
 		uint8_t* srcData = _mem->data;
 		uint8_t* temp = NULL;
@@ -5198,7 +5210,7 @@ namespace bgfx { namespace d3d12
 					, resource
 					, m_ptr
 					, resource
-					, s_textureFormat[m_textureFormat].m_fmt
+					, s_textureFormat[m_textureFormat].m_fmtSrv
 				);
 			}
 

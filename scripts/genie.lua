@@ -84,6 +84,9 @@ newaction {
 
 			local csgen = require "bindings-bf"
 			csgen.write(csgen.gen(), "../bindings/bf/bgfx.bf")
+
+			local ziggen = require "bindings-zig"
+			ziggen.write(ziggen.gen(), "../bindings/zig/bgfx.zig")
 		end
 
 		os.exit()
@@ -97,6 +100,11 @@ newaction {
 
 		local f = io.popen("git rev-list --count HEAD")
 		local rev = string.match(f:read("*a"), ".*%S")
+
+		local codegen = require "codegen"
+		local idl = codegen.idl "bgfx.idl"
+		print("1." .. idl._version .. "." .. rev)
+
 		f:close()
 		f = io.popen("git log --format=format:%H -1")
 		local sha1 = f:read("*a")
@@ -433,14 +441,6 @@ function exampleProjectDefaults()
 			path.join(BGFX_DIR, "examples/runtime/tvOS-Info.plist"),
 		}
 
-
-	configuration { "qnx*" }
-		targetextension ""
-		links {
-			"EGL",
-			"GLESv2",
-		}
-
 	configuration {}
 
 	strip()
@@ -593,9 +593,9 @@ or _OPTIONS["with-combined-examples"] then
 		)
 
 	-- 17-drawstress requires multithreading, does not compile for singlethreaded wasm
---	if platform is not single-threaded then
+	if premake.gcc.namestyle == nil or not premake.gcc.namestyle == "Emscripten" then
 		exampleProject(false, "17-drawstress")
---	end
+	end
 
 	-- C99 source doesn't compile under WinRT settings
 	if not premake.vstudio.iswinrt() then

@@ -30,6 +30,7 @@
 #define GL_IMPORT_NV___(_optional, _proto, _func) GL_EXTENSION(_optional, _proto, _func, _func ## NV)
 #define GL_IMPORT_OES__(_optional, _proto, _func) GL_EXTENSION(_optional, _proto, _func, _func ## OES)
 #define GL_IMPORT_IMG__(_optional, _proto, _func) GL_EXTENSION(_optional, _proto, _func, _func ## IMG)
+#define GL_IMPORT_WEBGL(_optional, _proto, _func) GL_EXTENSION(_optional, _proto, _func, _func ## WEBGL)
 #define GL_IMPORT_____x(_optional, _proto, _func) GL_EXTENSION(_optional, _proto, _func, _func ## XXXXX)
 
 #if GL_IMPORT_TYPEDEFS
@@ -227,6 +228,7 @@ typedef void           (GL_APIENTRYP PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC)(GL
 typedef void           (GL_APIENTRYP PFNGLINSERTEVENTMARKEREXTPROC) (GLsizei length, const GLchar *marker);
 typedef void           (GL_APIENTRYP PFNGLPUSHGROUPMARKEREXTPROC) (GLsizei length, const GLchar *marker);
 typedef void           (GL_APIENTRYP PFNGLPOPGROUPMARKEREXTPROC) (void);
+typedef void           (GL_APIENTRYP PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples);
 #endif // GL_IMPORT_TYPEDEFS
 
 #if BGFX_USE_GL_DYNAMIC_LIB
@@ -494,6 +496,7 @@ GL_IMPORT______(true,  PFNGLGETINTERNALFORMATI64VPROC,             glGetInternal
 #endif // BGFX_USE_GL_DYNAMIC_LIB
 
 GL_IMPORT______(true,  PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC,    glGetTranslatedShaderSourceANGLE);
+GL_IMPORT______(true, PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC, glFramebufferTexture2DMultisampleEXT);
 
 #if !BGFX_CONFIG_RENDERER_OPENGL
 GL_IMPORT______(true,  PFNGLPOINTSIZEPROC,                         glPointSize);
@@ -573,8 +576,8 @@ GL_IMPORT_____x(true,  PFNGLBLENDEQUATIONSEPARATEIPROC,            glBlendEquati
 GL_IMPORT_____x(true,  PFNGLBLENDFUNCIPROC,                        glBlendFunci);
 GL_IMPORT_____x(true,  PFNGLBLENDFUNCSEPARATEIPROC,                glBlendFuncSeparatei);
 
-GL_IMPORT_____x(true,  PFNGLDRAWBUFFERPROC,                        glDrawBuffer);
-GL_IMPORT_____x(true,  PFNGLREADBUFFERPROC,                        glReadBuffer);
+GL_IMPORT______(true,  PFNGLDRAWBUFFERPROC,                        glDrawBuffer);
+GL_IMPORT______(true,  PFNGLREADBUFFERPROC,                        glReadBuffer);
 GL_IMPORT_____x(true,  PFNGLGENSAMPLERSPROC,                       glGenSamplers);
 GL_IMPORT_____x(true,  PFNGLDELETESAMPLERSPROC,                    glDeleteSamplers);
 GL_IMPORT_____x(true,  PFNGLBINDSAMPLERPROC,                       glBindSampler);
@@ -595,7 +598,11 @@ GL_IMPORT_____x(true,  PFNGLMEMORYBARRIERPROC,                     glMemoryBarri
 GL_IMPORT_____x(true,  PFNGLDISPATCHCOMPUTEPROC,                   glDispatchCompute);
 GL_IMPORT_____x(true,  PFNGLDISPATCHCOMPUTEINDIRECTPROC,           glDispatchComputeIndirect);
 
+#if BX_PLATFORM_EMSCRIPTEN
+GL_IMPORT_WEBGL(true,  PFNGLDRAWBUFFERSPROC,                       glDrawBuffers);
+#else
 GL_IMPORT_NV___(true,  PFNGLDRAWBUFFERSPROC,                       glDrawBuffers);
+#endif
 GL_IMPORT_NV___(true,  PFNGLGENQUERIESPROC,                        glGenQueries);
 GL_IMPORT_NV___(true,  PFNGLDELETEQUERIESPROC,                     glDeleteQueries);
 GL_IMPORT_NV___(true,  PFNGLBEGINQUERYPROC,                        glBeginQuery);
@@ -671,7 +678,11 @@ GL_IMPORT______(true,  PFNGLMEMORYBARRIERPROC,                     glMemoryBarri
 GL_IMPORT______(true,  PFNGLDISPATCHCOMPUTEPROC,                   glDispatchCompute);
 GL_IMPORT______(true,  PFNGLDISPATCHCOMPUTEINDIRECTPROC,           glDispatchComputeIndirect);
 
+#	if BX_PLATFORM_EMSCRIPTEN
+GL_IMPORT_WEBGL(true,  PFNGLDRAWBUFFERSPROC,                       glDrawBuffers);
+#	else
 GL_IMPORT______(true,  PFNGLDRAWBUFFERSPROC,                       glDrawBuffers);
+#	endif
 GL_IMPORT______(true,  PFNGLGENQUERIESPROC,                        glGenQueries);
 GL_IMPORT______(true,  PFNGLDELETEQUERIESPROC,                     glDeleteQueries);
 GL_IMPORT______(true,  PFNGLBEGINQUERYPROC,                        glBeginQuery);

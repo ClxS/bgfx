@@ -996,6 +996,11 @@ public static partial class bgfx
 		/// Suspend rendering.
 		/// </summary>
 		Suspend                = 0x00080000,
+	
+		/// <summary>
+		/// Transparent backbuffer. Availability depends on: `BGFX_CAPS_TRANSPARENT_BACKBUFFER`.
+		/// </summary>
+		TransparentBackbuffer  = 0x00100000,
 		FullscreenShift        = 0,
 		FullscreenMask         = 0x00000001,
 		ReservedShift          = 31,
@@ -1099,52 +1104,57 @@ public static partial class bgfx
 		/// Texture blit is supported.
 		/// </summary>
 		TextureBlit            = 0x0000000000040000,
-		TextureCompareReserved = 0x0000000000080000,
+	
+		/// <summary>
+		/// Transparent back buffer supported.
+		/// </summary>
+		TransparentBackbuffer  = 0x0000000000080000,
+		TextureCompareReserved = 0x0000000000100000,
 	
 		/// <summary>
 		/// Texture compare less equal mode is supported.
 		/// </summary>
-		TextureCompareLequal   = 0x0000000000100000,
+		TextureCompareLequal   = 0x0000000000200000,
 	
 		/// <summary>
 		/// Cubemap texture array is supported.
 		/// </summary>
-		TextureCubeArray       = 0x0000000000200000,
+		TextureCubeArray       = 0x0000000000400000,
 	
 		/// <summary>
 		/// CPU direct access to GPU texture memory.
 		/// </summary>
-		TextureDirectAccess    = 0x0000000000400000,
+		TextureDirectAccess    = 0x0000000000800000,
 	
 		/// <summary>
 		/// Read-back texture is supported.
 		/// </summary>
-		TextureReadBack        = 0x0000000000800000,
+		TextureReadBack        = 0x0000000001000000,
 	
 		/// <summary>
 		/// Vertex attribute half-float is supported.
 		/// </summary>
-		VertexAttribHalf       = 0x0000000001000000,
+		VertexAttribHalf       = 0x0000000002000000,
 	
 		/// <summary>
 		/// Vertex attribute 10_10_10_2 is supported.
 		/// </summary>
-		VertexAttribUint10     = 0x0000000002000000,
+		VertexAttribUint10     = 0x0000000004000000,
 	
 		/// <summary>
 		/// Rendering with VertexID only is supported.
 		/// </summary>
-		VertexId               = 0x0000000004000000,
+		VertexId               = 0x0000000008000000,
 	
 		/// <summary>
 		/// Viewport layer is available in vertex shader.
 		/// </summary>
-		ViewportLayerArray     = 0x0000000008000000,
+		ViewportLayerArray     = 0x0000000010000000,
 	
 		/// <summary>
 		/// All texture compare modes are supported.
 		/// </summary>
-		TextureCompareAll      = 0x0000000000180000,
+		TextureCompareAll      = 0x0000000000300000,
 	}
 	
 	[Flags]
@@ -1287,6 +1297,11 @@ public static partial class bgfx
 		/// Microsoft adapter.
 		/// </summary>
 		Microsoft              = 0x1414,
+	
+		/// <summary>
+		/// ARM adapter.
+		/// </summary>
+		Arm                    = 0x13b5,
 	}
 	
 	[Flags]
@@ -2443,7 +2458,7 @@ public static partial class bgfx
 	public static extern unsafe void init_ctor(Init* _init);
 	
 	/// <summary>
-	/// Initialize bgfx library.
+	/// Initialize the bgfx library.
 	/// </summary>
 	///
 	/// <param name="_init">Initialization parameters. See: `bgfx::Init` for more info.</param>
@@ -2461,13 +2476,13 @@ public static partial class bgfx
 	
 	/// <summary>
 	/// Reset graphic settings and back-buffer size.
-	/// @attention This call doesn't actually change window size, it just
-	///   resizes back-buffer. Windowing code has to change window size.
+	/// @attention This call doesn’t change the window size, it just resizes
+	///   the back-buffer. Your windowing code controls the window size.
 	/// </summary>
 	///
 	/// <param name="_width">Back-buffer width.</param>
 	/// <param name="_height">Back-buffer height.</param>
-	/// <param name="_flags">See: `BGFX_RESET_*` for more info.   - `BGFX_RESET_NONE` - No reset flags.   - `BGFX_RESET_FULLSCREEN` - Not supported yet.   - `BGFX_RESET_MSAA_X[2/4/8/16]` - Enable 2, 4, 8 or 16 x MSAA.   - `BGFX_RESET_VSYNC` - Enable V-Sync.   - `BGFX_RESET_MAXANISOTROPY` - Turn on/off max anisotropy.   - `BGFX_RESET_CAPTURE` - Begin screen capture.   - `BGFX_RESET_FLUSH_AFTER_RENDER` - Flush rendering after submitting to GPU.   - `BGFX_RESET_FLIP_AFTER_RENDER` - This flag  specifies where flip     occurs. Default behaviour is that flip occurs before rendering new     frame. This flag only has effect when `BGFX_CONFIG_MULTITHREADED=0`.   - `BGFX_RESET_SRGB_BACKBUFFER` - Enable sRGB backbuffer.</param>
+	/// <param name="_flags">See: `BGFX_RESET_*` for more info.   - `BGFX_RESET_NONE` - No reset flags.   - `BGFX_RESET_FULLSCREEN` - Not supported yet.   - `BGFX_RESET_MSAA_X[2/4/8/16]` - Enable 2, 4, 8 or 16 x MSAA.   - `BGFX_RESET_VSYNC` - Enable V-Sync.   - `BGFX_RESET_MAXANISOTROPY` - Turn on/off max anisotropy.   - `BGFX_RESET_CAPTURE` - Begin screen capture.   - `BGFX_RESET_FLUSH_AFTER_RENDER` - Flush rendering after submitting to GPU.   - `BGFX_RESET_FLIP_AFTER_RENDER` - This flag  specifies where flip     occurs. Default behaviour is that flip occurs before rendering new     frame. This flag only has effect when `BGFX_CONFIG_MULTITHREADED=0`.   - `BGFX_RESET_SRGB_BACKBUFFER` - Enable sRGB back-buffer.</param>
 	/// <param name="_format">Texture format. See: `TextureFormat::Enum`.</param>
 	///
 	[DllImport(DllName, EntryPoint="bgfx_reset", CallingConvention = CallingConvention.Cdecl)]
@@ -2711,7 +2726,7 @@ public static partial class bgfx
 	public static extern unsafe DynamicIndexBufferHandle create_dynamic_index_buffer(uint _num, ushort _flags);
 	
 	/// <summary>
-	/// Create dynamic index buffer and initialized it.
+	/// Create a dynamic index buffer and initialize it.
 	/// </summary>
 	///
 	/// <param name="_mem">Index buffer data.</param>
@@ -2816,7 +2831,7 @@ public static partial class bgfx
 	/// Allocate transient index buffer.
 	/// </summary>
 	///
-	/// <param name="_tib">TransientIndexBuffer structure is filled and is valid for the duration of frame, and it can be reused for multiple draw calls.</param>
+	/// <param name="_tib">TransientIndexBuffer structure will be filled, and will be valid for the duration of frame, and can be reused for multiple draw calls.</param>
 	/// <param name="_num">Number of indices to allocate.</param>
 	/// <param name="_index32">Set to `true` if input indices will be 32-bit.</param>
 	///
@@ -2827,7 +2842,7 @@ public static partial class bgfx
 	/// Allocate transient vertex buffer.
 	/// </summary>
 	///
-	/// <param name="_tvb">TransientVertexBuffer structure is filled and is valid for the duration of frame, and it can be reused for multiple draw calls.</param>
+	/// <param name="_tvb">TransientVertexBuffer structure will be filled, and will be valid for the duration of frame, and can be reused for multiple draw calls.</param>
 	/// <param name="_num">Number of vertices to allocate.</param>
 	/// <param name="_layout">Vertex layout.</param>
 	///
@@ -2840,10 +2855,10 @@ public static partial class bgfx
 	/// true.
 	/// </summary>
 	///
-	/// <param name="_tvb">TransientVertexBuffer structure is filled and is valid for the duration of frame, and it can be reused for multiple draw calls.</param>
+	/// <param name="_tvb">TransientVertexBuffer structure will be filled, and will be valid for the duration of frame, and can be reused for multiple draw calls.</param>
 	/// <param name="_layout">Vertex layout.</param>
 	/// <param name="_numVertices">Number of vertices to allocate.</param>
-	/// <param name="_tib">TransientIndexBuffer structure is filled and is valid for the duration of frame, and it can be reused for multiple draw calls.</param>
+	/// <param name="_tib">TransientIndexBuffer structure will be filled, and will be valid for the duration of frame, and can be reused for multiple draw calls.</param>
 	/// <param name="_numIndices">Number of indices to allocate.</param>
 	/// <param name="_index32">Set to `true` if input indices will be 32-bit.</param>
 	///
@@ -2855,7 +2870,7 @@ public static partial class bgfx
 	/// Allocate instance data buffer.
 	/// </summary>
 	///
-	/// <param name="_idb">InstanceDataBuffer structure is filled and is valid for duration of frame, and it can be reused for multiple draw calls.</param>
+	/// <param name="_idb">InstanceDataBuffer structure will be filled, and will be valid for duration of frame, and can be reused for multiple draw calls.</param>
 	/// <param name="_num">Number of instances.</param>
 	/// <param name="_stride">Instance stride. Must be multiple of 16.</param>
 	///
@@ -3023,7 +3038,7 @@ public static partial class bgfx
 	public static extern unsafe TextureHandle create_texture_2d(ushort _width, ushort _height, bool _hasMips, ushort _numLayers, TextureFormat _format, ulong _flags, Memory* _mem);
 	
 	/// <summary>
-	/// Create texture with size based on backbuffer ratio. Texture will maintain ratio
+	/// Create texture with size based on back-buffer ratio. Texture will maintain ratio
 	/// if back buffer resolution changes.
 	/// </summary>
 	///
@@ -3177,7 +3192,7 @@ public static partial class bgfx
 	public static extern unsafe FrameBufferHandle create_frame_buffer(ushort _width, ushort _height, TextureFormat _format, ulong _textureFlags);
 	
 	/// <summary>
-	/// Create frame buffer with size based on backbuffer ratio. Frame buffer will maintain ratio
+	/// Create frame buffer with size based on back-buffer ratio. Frame buffer will maintain ratio
 	/// if back buffer resolution changes.
 	/// </summary>
 	///
@@ -3425,8 +3440,8 @@ public static partial class bgfx
 	
 	/// <summary>
 	/// Set view clear flags with different clear color for each
-	/// frame buffer texture. Must use `bgfx::setPaletteColor` to setup clear color
-	/// palette.
+	/// frame buffer texture. `bgfx::setPaletteColor` must be used to set up a
+	/// clear color palette.
 	/// </summary>
 	///
 	/// <param name="_id">View id.</param>
@@ -3470,8 +3485,8 @@ public static partial class bgfx
 	public static extern unsafe void set_view_frame_buffer(ushort _id, FrameBufferHandle _handle);
 	
 	/// <summary>
-	/// Set view view and projection matrices, all draw primitives in this
-	/// view will use these matrices.
+	/// Set view's view matrix and projection matrix,
+	/// all draw primitives in this view will use these two matrices.
 	/// </summary>
 	///
 	/// <param name="_id">View id.</param>
@@ -3530,7 +3545,7 @@ public static partial class bgfx
 	/// <summary>
 	/// Set render states for draw primitive.
 	/// @remarks
-	///   1. To setup more complex states use:
+	///   1. To set up more complex states use:
 	///      `BGFX_STATE_ALPHA_REF(_ref)`,
 	///      `BGFX_STATE_POINT_SIZE(_size)`,
 	///      `BGFX_STATE_BLEND_FUNC(_src, _dst)`,
@@ -4078,7 +4093,7 @@ public static partial class bgfx
 	/// <summary>
 	/// Set render states for draw primitive.
 	/// @remarks
-	///   1. To setup more complex states use:
+	///   1. To set up more complex states use:
 	///      `BGFX_STATE_ALPHA_REF(_ref)`,
 	///      `BGFX_STATE_POINT_SIZE(_size)`,
 	///      `BGFX_STATE_BLEND_FUNC(_src, _dst)`,
